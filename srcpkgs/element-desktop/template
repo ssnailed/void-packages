@@ -1,15 +1,16 @@
 # Template file for 'element-desktop'
 pkgname=element-desktop
-version=1.11.83
+version=1.11.97
 revision=1
 create_wrksrc=yes
 conf_files="/etc/${pkgname}/config.json"
+archs="x86_64* aarch64*"
 hostmakedepends="git yarn nodejs rust cargo python3 curl
  sqlcipher-devel libnotify-devel pkg-config
  app-builder jq moreutils"
 makedepends="libsecret-devel"
 depends="c-ares ffmpeg gtk+3 http-parser libevent
- libxslt minizip nss re2 snappy sqlcipher electron24"
+ libxslt minizip nss re2 snappy sqlcipher electron33"
 short_desc="Glossy Matrix collaboration client, desktop version"
 maintainer="Orphaned <orphan@voidlinux.org>"
 license="Apache-2.0"
@@ -17,8 +18,8 @@ homepage="https://element.io"
 changelog="https://raw.githubusercontent.com/vector-im/element-desktop/develop/CHANGELOG.md"
 distfiles="https://github.com/vector-im/element-desktop/archive/v${version}.tar.gz>element-desktop-v${version}.tar.gz
  https://github.com/vector-im/element-web/archive/v${version}.tar.gz>element-web-v${version}.tar.gz"
-checksum="be20c6cdf5b77bd9ee49bc202611a3e13deed31522e7cf956635ae13112008de
- 50cd755c8fb22163f089eeb89b2fc23a7c28d65522565a1e9b0a791aa8829952"
+checksum="ce378e205b005e11aef73f0cfbd54da5fadc018a39dfb2435fee2b96f0be5904
+ e2d981c84d7d2d53b42f4e4b98c123018786b0e8bfcf7b10272d3dd16f245655"
 
 export USE_SYSTEM_APP_BUILDER=true
 
@@ -41,9 +42,6 @@ pre_build() {
 	# to x86, otherwise it will fail in electron js stuff on
 	# platforms officially unsupported by electron (ppc64le...)
 	local carch=x64
-	case "$XBPS_TARGET_MACHINE" in
-		i686*) carch=ia32 ;;
-	esac
 
 	cd ${pkgname/desktop/web}
 
@@ -52,8 +50,8 @@ pre_build() {
 
 	# Build dependencies and alterations for element-desktop
 	cd ../${pkgname}
-	npm_config_arch=$carch yarn add keytar
 	npm_config_arch=$carch yarn install
+	npm_config_arch=$carch yarn add matrix-seshat
 }
 
 do_build() {
